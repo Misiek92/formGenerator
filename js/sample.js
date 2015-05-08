@@ -1,7 +1,7 @@
 
 var input = [
-    {id: "test", type: "text", name: "Imie", description: "Jakis opis", regexp: /^[a-zA-Z]*[a-zA-Z]?$/, value: "Mateusz hehehe", className: "input", length: 10, breakLine: false, uppercase: true},
-    {id: "mail", type: "mail", name: "e-mail", description: "Adres e-mail", className: "input", length: 40, breakLine: false, uppercase: true},
+    {id: "test", type: "text", name: "Imie", description: "Jakis opis", regexp: /^[a-zA-Z]*[a-zA-Z]?$/, value: "Mateusz", className: "input", length: 10, breakLine: false, uppercase: true},
+    {id: "mail", type: "mail", name: "e-mail", description: "Adres e-mail", className: "input", length: 40, breakLine: true, uppercase: true},
     {id: "test2", type: "number", className: "input", breakLine: true, length: 3, description: "Wiek: "},
     {id: "test3", type: "checkbox", description: "checkbox opis"},
     {id: "test4", type: "hidden", name: "hidden name"},

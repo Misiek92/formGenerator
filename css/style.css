@@ -57,3 +57,36 @@ button:focus {
     background: #FFDFDF !important;
     /* border: 2px dashed #D1A5A2; */
 }
+
+.fg-inline {
+    display: inline-block;
+    border: 0px;
+    vertical-align: middle;
+}
+
+.fg-additional {
+    text-align: right;
+    height: 10px;
+    font-size: 10px;
+    margin: 0px;
+    line-height: 10px;
+    color: #fe5c5c;
+    text-shadow: 1px 1px 1px #d1d1d1;
+    font-weight: bold;
+}
+
+.fg-red {
+    color: #c10000 !important;
+}
+
+.fg-green {
+    color: #30a630 !important;
+}
+
+.fg-orange {
+    color:#f37c06 !important;
+}
+
+.fg-yellow {
+    color: #eab300 !important;
+}

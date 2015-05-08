@@ -59,7 +59,7 @@
                 /*
                  * List of variables
                  */
-                var fieldId = val.id,
+                var fieldId = val.id.toLowerCase(),
                     fieldType = "text",
                     fieldPlaceholder = val.name,
                     fieldDescription = val.description,
@@ -72,12 +72,33 @@
                     cKey = 67,
                     label,
                     //^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
-                    mailRegExp = /^((\[^<>()\[\]\\.,;:\s@\"\]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                    r = val.regexp;
-                if (val.type !== "undefined" && val.type !== "number") {
-                    fieldType = val.type;
+                    mailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                    smallLetterRegExp = /[a-z]/,
+                    bigLetterRegExp = /[A-Z]/,
+                    diacriticRegExp = /\d/,
+                    specialCharRegExp = /\W/,
+                    r = val.regexp,
+                    wrapper,
+                    additional;
+                if (val.type !== "undefined" && val.type !== "number" && val.type !== "mail") {
+                    fieldType = val.type.toLowerCase();
                 }
                 //end
+
+                /*
+                 * Create wrapper for elements around field + field
+                 */
+                wrapper = $("<div>")
+                    .attr({
+                        id: "cell_" + val.id
+                    }).addClass("fg-inline");
+
+                additional = $("<p>")
+                    .attr({
+                        id: "additional_" + val.id
+                    })
+                    .addClass("fg-additional")
+                    .html(" ");
 
                 /*
                  * create input field
@@ -173,9 +194,14 @@
                                 if (r.test($(this).val())) {
                                     console.log($(this).id + " - regexp valid");
                                     $(this).removeClass("fg-error-input");
+                                    console.log(this.id);
+                                    $("#additional_" + val.id).html("Correct!");
+                                    $("#additional_" + val.id).addClass("fg-green");
                                 } else {
                                     console.log($(this).id + " - regexp don't valid");
                                     $(this).addClass("fg-error-input");
+                                    $("#additional_" + val.id).html("Wrong input");
+                                    $("#additional_" + val.id).removeClass("fg-green");
                                 }
                             }
                             // mail validation
@@ -183,13 +209,63 @@
                                 if (mailRegExp.test($(this).val())) {
                                     console.log($(this).attr("id") + " - mail valid");
                                     $(this).removeClass("fg-error-input");
+                                    $("#additional_" + val.id).html("Correct!");
+                                    $("#additional_" + val.id).addClass("fg-green");
                                 } else {
                                     console.log($(this).attr("id") + " - value is not an mail address");
                                     $(this).addClass("fg-error-input");
+                                    $("#additional_" + val.id).html("This is not an e-mail");
+                                    $("#additional_" + val.id).removeClass("fg-green");
                                 }
                             }
                         });
+                    }
 
+                    /*
+                     * Password check
+                     */
+                    if (val.type === "password") {
+                        $("#additional_" + val.id).html("password must have min. 8 characters");
+                        field.keyup(function () {
+                            var balance = 0,
+                                password = $(this).val(),
+                                notify = "Weak",
+                                notifyClass = "";
+                            $("#additional_" + val.id).removeClass();
+                            $("#additional_" + val.id).addClass("fg-additional");
+                            if (password.length < 8) { // check length
+                                $("#additional_" + val.id).html("Password too short (min. 8 characters)");
+                            } else { // rest password check
+                                if (smallLetterRegExp.test(password)) {
+                                    ++balance;
+                                }
+                                if (bigLetterRegExp.test(password)) {
+                                    ++balance;
+                                }
+                                if (specialCharRegExp.test(password)) {
+                                    ++balance;
+                                }
+                                if (diacriticRegExp.test(password)) {
+                                    ++balance;
+                                }
+
+                                if (balance <= 1) {
+                                    notify = "Weak";
+                                    notifyClass = "fg-red";
+                                } else if (balance === 2) {
+                                    notify = "Average"
+                                    notifyClass = "fg-orange";
+                                } else if (balance === 3) {
+                                    notify = "Strong"
+                                    notifyClass = "fg-yellow";
+                                } else if (balance === 4) {
+                                    notify = "Very Strong"
+                                    notifyClass = "fg-green";
+                                }
+
+                                $("#additional_" + val.id).html(notify).addClass(notifyClass);
+                            }
+                        });
                     }
                 } else { // Create select object
                     if (typeof val.list !== "undefined" && val.list[0]) {
@@ -219,8 +295,10 @@
                 /*
                  * append elements to form
                  */
-                $(form).append(label);
-                $(form).append(field);
+                $(wrapper).append(label);
+                $(wrapper).append(field);
+                $(wrapper).append(additional);
+                $(form).append(wrapper);
                 if (typeof val.breakLine !== "undefined" && val.breakLine === true) // if val.breakLine
                     $(form).append($("<br>"));
 
