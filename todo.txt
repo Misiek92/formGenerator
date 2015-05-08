@@ -1,0 +1,5 @@
+- clear button
+- submit button
+- submit validation
+- required field
+
