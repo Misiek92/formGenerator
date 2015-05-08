@@ -30,7 +30,7 @@
      *      # password
      *      # postalcode - for Poland
      *      # hidden
-     *      # title - titles for sectors
+     *      # title - title for sectors
      *  - name: This value will be visible as placeholder,
      *  - description: short description before input,
      *  - regexp: validation based on regular expression,
@@ -48,6 +48,7 @@
      * @returns html form with validation
      */
     $.fn.formGenerator = function (id, input) {
+
         var form = $("<form>").attr({id: id});
 
         $.each(input, function (i, val) {
