@@ -6,7 +6,7 @@ var input = [
     {id: "test3", type: "checkbox", description: "checkbox opis"},
     {id: "test4", type: "hidden", name: "hidden name"},
     {id: "test5", type: "select", name: "lista rozwijana", list: ["Mateusz", "Jan", "Ania", "Kasia"], value: "Ania", className: "input"},
-    {id: "haselko", type: "password", name: "haslo", length: 20, className: "input", minLength: 8}
+    {id: "haselko", type: "password", name: "haslo", length: 20, className: "input"}
 ];
 
 $("#form").formGenerator("test", input);

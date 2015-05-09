@@ -53,7 +53,7 @@
             id: id
         });
 
-        $.each(input, function (i, val) {
+        $.each(input, function (undefined, val) {
 
             if (typeof val.id !== "undefined") { // input must have id
                 /*
@@ -77,7 +77,7 @@
                     bigLetterRegExp = /[A-Z]/,
                     diacriticRegExp = /\d/,
                     specialCharRegExp = /\W/,
-                    lengthFlag = false,
+                    lengthFlag = true,
                     r = val.regexp,
                     wrapper,
                     additional;
@@ -114,7 +114,7 @@
                             maxlength: fieldLength,
                             minlength: fieldMinLength
                         })
-                        .addClass(val.className);
+                        .addClass(fieldClass);
 
                     /*
                      * Length validation
@@ -127,15 +127,14 @@
                                 notify;
                             $("#additional_" + val.id).removeClass();
                             $("#additional_" + val.id).addClass("fg-additional");
-                            22
                             if (actualLength < fieldMinLength) {
                                 lengthFlag = false;
-                                notify = "Value too short! (Min. "+fieldMinLength+" characters)"
+                                notify = "Value too short! (Min. " + fieldMinLength + " characters)";
                                 $("#additional_" + val.id).html(notify);
                                 $(this).addClass("fg-error-input");
                             } else {
                                 lengthFlag = true;
-                                notify = ""
+                                notify = "";
                                 $("#additional_" + val.id).html(notify);
                                 $(this).removeClass("fg-error-input");
                             }
@@ -254,10 +253,10 @@
                     }
 
                     /*
-                     * Password check
+                     * Old Password check
                      */
-                    if (val.type === "password") {
-                        // $("#additional_" + val.id).html("password must have min. 8 characters");
+                    /*
+                     if (val.type === "password") {
                         field.keyup(function () {
                             if (lengthFlag) {
                                 var balance = 0,
@@ -266,17 +265,14 @@
                                     notifyClass = "";
                                 $("#additional_" + val.id).removeClass();
                                 $("#additional_" + val.id).addClass("fg-additional");
-                                /*                            if (password.length < 8) { // check length
-                                                                $("#additional_" + val.id).html("Password too short (min. 8 characters)");
-                                                            } else { // rest password check*/
                                 if (smallLetterRegExp.test(password)) {
-                                    ++balance;
+                                    balance++;
                                 }
                                 if (bigLetterRegExp.test(password)) {
-                                    ++balance;
+                                    balance+3;
                                 }
                                 if (specialCharRegExp.test(password)) {
-                                    ++balance;
+                                    balance+4;
                                 }
                                 if (diacriticRegExp.test(password)) {
                                     ++balance;
@@ -286,20 +282,72 @@
                                     notify = "Weak";
                                     notifyClass = "fg-red";
                                 } else if (balance === 2) {
-                                    notify = "Average"
+                                    notify = "Average";
                                     notifyClass = "fg-orange";
                                 } else if (balance === 3) {
-                                    notify = "Strong"
+                                    notify = "Strong";
                                     notifyClass = "fg-yellow";
                                 } else if (balance === 4) {
-                                    notify = "Very Strong"
+                                    notify = "Very Strong";
                                     notifyClass = "fg-green";
                                 }
 
                                 $("#additional_" + val.id).html(notify).addClass(notifyClass);
                             }
-                            /* }*/
                         });
+                    }    */
+                    /*
+                     * Password validation with power measurement
+                     */
+                    if (fieldType === "password") {
+                        field.keyup(function () {
+                            if (lengthFlag) {
+                                var balance = 0,
+                                    weight = 0,
+                                    password = $(this).val(),
+                                    pwLength = password.length,
+                                    notify = "Weak",
+                                    requiredPower,
+                                    notifyClass = "",
+                                    smallLetter = password.match(smallLetterRegExp),
+                                    bigLetter = password.match(bigLetterRegExp),
+                                    diacritic = password.match(diacriticRegExp),
+                                    special = password.match(specialCharRegExp);
+                                /*  countSmallLetter,
+                                    countBigLetter,
+                                    countDiacritic,
+                                    countSpecial; */
+
+                                typeof val.power !== "undefined" ? requiredPower = val.power : requiredPower = 14; // value 14 is equal to 8 char length password with small letters + number
+
+                                if (smallLetter !== null) {
+                                    //    countSmallLetter = smallLetter.length;
+                                    weight += 26;
+                                }
+                                if (bigLetter !== null) {
+                                    //    countBigLetter = bigLetter.length;
+                                    weight += 26;
+                                }
+                                if (diacritic !== null) {
+                                    //   countDiacritic = diacritic.length;
+                                    weight += 32;
+                                }
+                                if (special !== null) {
+                                    //    countSpecial = special.length;
+                                    weight += 10;
+                                }
+                                $("#additional_" + val.id).removeClass();
+                                $("#additional_" + val.id).addClass("fg-additional");
+
+                                weight = weight / 10;
+                                balance = Math.floor(Math.log(Math.pow(weight, pwLength))); // measure power algorythm.
+                                if (balance >= requiredPower) {
+                                    notifyClass = "fg-green";
+                                }
+                                $("#additional_" + val.id).html("Power: " + balance + " (min. " + requiredPower + ", recommended: 20)").addClass(notifyClass);
+                            }
+                        });
+
                     }
 
                 } else { // Create select object
@@ -308,10 +356,10 @@
                             .attr({
                                 id: fieldId
                             })
-                            .addClass(val.className);
+                            .addClass(fieldClass);
 
 
-                        $.each(val.list, function (i, value) {
+                        $.each(val.list, function (undefined, value) {
                             var option = $("<option>");
                             option.html(value);
                             $(field).append(option);
@@ -332,6 +380,32 @@
                  */
                 $(wrapper).append(label);
                 $(wrapper).append(field);
+                /*
+                 * exception for password field
+                 */
+                if (fieldType === "password") {
+                    var toggleShow = $("<input>")
+                        .attr({
+                            id: "toggle_" + val.id,
+                            type: "checkbox",
+                            title: "show password"
+                        })
+                        .addClass("fg-inline")
+                        .change(
+                            function () {
+                                if ($(this).is(':checked')) {
+                                    $("#" + fieldId).attr({
+                                        type: "text"
+                                    });
+                                } else {
+                                    $("#" + fieldId).attr({
+                                        type: "password"
+                                    });
+                                }
+                            }
+                        );
+                    $(wrapper).append(toggleShow);
+                }
                 $(wrapper).append(additional);
                 $(form).append(wrapper);
                 if (typeof val.breakLine !== "undefined" && val.breakLine === true) // if val.breakLine
