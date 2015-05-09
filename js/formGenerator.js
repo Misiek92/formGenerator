@@ -68,7 +68,7 @@
             clearForm = function () {
                 $("input").each(function () {
                     $(this).val("");
-                })
+                });
             },
             setValid = function () {
                 $("[required]").each(function () { // exception for default values
@@ -77,8 +77,8 @@
                     } else {
                         $(this).attr("valid", "true");
                     }
-                })
-            }
+                });
+            };
 
         $.each(input, function (undefined, val) {
 
@@ -157,7 +157,9 @@
                             $("#additional_" + val.id).addClass("fg-additional");
                             if (actualLength < fieldMinLength) {
                                 lengthFlag = false;
-                                $(this).attr("valid", "false");
+                                if ($(this).prop("required")) {
+                                    $(this).attr("valid", "false");
+                                }
                                 notify = "Value too short! (Min. " + fieldMinLength + " characters)";
                                 $("#additional_" + val.id).html(notify);
                                 $(this).addClass("fg-error-input");
@@ -165,7 +167,9 @@
                                 lengthFlag = true;
                                 notify = "";
                                 $("#additional_" + val.id).html(notify);
-                                $(this).attr("valid", "true");
+                                if ($(this).prop("required")) {
+                                    $(this).attr("valid", "true");
+                                }
                                 $(this).removeClass("fg-error-input");
                             }
 
@@ -256,13 +260,17 @@
                                         $(this).removeClass("fg-error-input");
                                         console.log(this.id);
                                         $("#additional_" + val.id).html("Correct!");
-                                        $(this).attr("valid", "true");
+                                        if ($(this).prop("required")) {
+                                            $(this).attr("valid", "true");
+                                        }
                                         $("#additional_" + val.id).addClass("fg-green");
                                     } else {
                                         console.log($(this).id + " - regexp don't valid");
                                         $(this).addClass("fg-error-input");
                                         $("#additional_" + val.id).html("Wrong input");
-                                        $(this).attr("valid", "false");
+                                        if ($(this).prop("required")) {
+                                            $(this).attr("valid", "false");
+                                        }
                                         $("#additional_" + val.id).removeClass("fg-green");
                                     }
                                 }
@@ -272,13 +280,17 @@
                                         console.log($(this).attr("id") + " - mail valid");
                                         $(this).removeClass("fg-error-input");
                                         $("#additional_" + val.id).html("Correct!");
-                                        $(this).attr("valid", "true");
+                                        if ($(this).prop("required")) {
+                                            $(this).attr("valid", "true");
+                                        }
                                         $("#additional_" + val.id).addClass("fg-green");
                                     } else {
                                         console.log($(this).attr("id") + " - value is not an mail address");
                                         $(this).addClass("fg-error-input");
                                         $("#additional_" + val.id).html("This is not an e-mail");
-                                        $(this).attr("valid", "false");
+                                        if ($(this).prop("required")) {
+                                            $(this).attr("valid", "false");
+                                        }
                                         $("#additional_" + val.id).removeClass("fg-green");
                                     }
                                 }
@@ -340,7 +352,6 @@
                                     weight = 0,
                                     password = $(this).val(),
                                     pwLength = password.length,
-                                    notify = "Weak",
                                     requiredPower,
                                     notifyClass = "",
                                     smallLetter = password.match(smallLetterRegExp),
@@ -352,7 +363,7 @@
                                     countDiacritic,
                                     countSpecial; */
 
-                                typeof val.power !== "undefined" ? requiredPower = val.power : requiredPower = 14; // value 14 is equal to 8 char length password with small letters + number
+                                requiredPower = (typeof val.power !== "undefined" ? val.power : 15); // value 14 is equal to 8 char length password with small letters + number
 
                                 if (smallLetter !== null) {
                                     //    countSmallLetter = smallLetter.length;
@@ -364,21 +375,27 @@
                                 }
                                 if (diacritic !== null) {
                                     //   countDiacritic = diacritic.length;
-                                    weight += 32;
+                                    weight += 10;
                                 }
                                 if (special !== null) {
                                     //    countSpecial = special.length;
-                                    weight += 10;
+                                    weight += 32;
                                 }
                                 $("#additional_" + val.id).removeClass();
                                 $("#additional_" + val.id).addClass("fg-additional");
-                                $(this).attr("valid", "false");
+                                if ($(this).prop("required")) {
+                                    $(this).attr("valid", "false");
+                                }
 
-                                weight = weight / 10;
+
+                                weight = weight / 5;
+                                console.log(weight);
                                 balance = Math.floor(Math.log(Math.pow(weight, pwLength))); // measure power algorythm.
                                 if (balance >= requiredPower) {
                                     notifyClass = "fg-green";
-                                    $(this).attr("valid", "true");
+                                    if ($(this).prop("required")) {
+                                        $(this).attr("valid", "true");
+                                    }
                                 }
                                 $("#additional_" + val.id).html("Power: " + balance + " (min. " + requiredPower + ", recommended: 20)").addClass(notifyClass);
                             }
@@ -474,7 +491,7 @@
                         //clear
                         clearForm();
                     }
-                })
+                });
 
             /*
              * Send button
@@ -501,7 +518,7 @@
                                     });
                                     $("select").each(function () {
                                         postData[$(this).attr("id")] = $(this).val();
-                                    })
+                                    });
                                     $.post(button.url, postData, button.success, button.dataType);
 
                                 } else {
@@ -515,7 +532,7 @@
 
                         }
                     }
-                })
+                });
 
             $(form).append($("<br>"));
             $(form).append(clear);
