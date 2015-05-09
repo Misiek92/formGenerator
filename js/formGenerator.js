@@ -47,7 +47,7 @@
      *
      * @returns html form with validation
      */
-    $.fn.formGenerator = function (id, input) {
+    $.fn.formGenerator = function (id, input, button) {
 
         var form = $("<form>").attr({
             id: id
@@ -374,14 +374,15 @@
                     .attr({
                         id: "label_" + fieldId,
                         for: fieldId
-                    }).html(fieldDescription);
+                    }).html(fieldDescription)
+                    .addClass(val.labelClassName);
                 /*
                  * append elements to form
                  */
                 $(wrapper).append(label);
                 $(wrapper).append(field);
                 /*
-                 * exception for password field
+                 * Show password
                  */
                 if (fieldType === "password") {
                     var toggleShow = $("<input>")
@@ -418,6 +419,57 @@
 
         });
 
+
+        if (typeof button !== "undefined") {
+            var clear = $("<button>")
+                .attr({
+                    id: "clear_" + id
+                })
+                .addClass(button.className + " fg-inline")
+                .html("Clear")
+                .click(function (e) {
+                    e.preventDefault();
+                    if (confirm("Do you really want clear form?")) {
+                        //clear
+                        $("input").each(function () {
+                            $(this).val("");
+                        })
+                    }
+                })
+
+            var submit = $("<button>")
+                .attr({
+                    id: "send_" + id
+                })
+                .addClass(button.className + " fg-inline")
+                .html("Send")
+                .click(function (e) {
+                    e.preventDefault();
+                    if (confirm("Do you really want send form?")) {
+                        if (typeof button.action !== "undefined") { // do sth
+                            if (button.action === "post" && typeof button.url !== "undefined" && typeof button.success !== "undefined" && typeof button.dataType !== "undefined") {
+                                $.post(button.url, {
+                                    name: "John",
+                                    time: "2pm"
+                                }, button.success, button.dataType);
+
+                            } else {
+                                alert("Error before sending form");
+                                console.log("Nothing was send because you didn't provide correct data in button object");
+                            }
+                        }
+
+                        //clear
+                        $("input").each(function () {
+                            $(this).val("");
+                        });
+                    }
+                })
+
+            $(form).append($("<br>"));
+            $(form).append(clear);
+            $(form).append(submit);
+        }
 
         $(this).html(form); // insert generated form object to HTML element
     };

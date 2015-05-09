@@ -40,6 +40,13 @@ button:focus {
     text-align: center;
 }
 
+#response {
+    position: absolute;
+    bottom: 100px;
+    width: 100%;
+    text-align: center;
+}
+
 .input {
     padding: 10px;
     border-radius: 10px;
@@ -84,9 +91,31 @@ button:focus {
 }
 
 .fg-orange {
-    color:#f37c06 !important;
+    color: #f37c06 !important;
 }
 
 .fg-yellow {
     color: #eab300 !important;
+}
+
+.button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #c10000;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 4px;
+    text-shadow: 1px 1px 1px #8f2d2d;
+    transition: all .2s linear;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #d42f2f;
+    transition: all .2s linear;
+}
+
+.button-inactive {
+    background: #494949 !important;
+    text-decoration: line-through !important;
 }
