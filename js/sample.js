@@ -1,12 +1,14 @@
 
 var input = [
-    {id: "test", type: "text", name: "Imie", description: "Jakis opis", regexp: /^[a-zA-Z]*[a-zA-Z]?$/, value: "Mateusz", className: "input", length: 10, minLength: 5, breakLine: false},
-    {id: "mail", type: "mail", name: "e-mail", description: "Adres e-mail", className: "input", length: 40, breakLine: true},
-    {id: "test2", type: "number", className: "input", breakLine: true, length: 3, description: "Wiek: "},
-    {id: "test3", type: "checkbox", description: "checkbox opis"},
-    {id: "test4", type: "hidden", name: "hidden name"},
-    {id: "test5", type: "select", name: "lista rozwijana", list: ["Mateusz", "Jan", "Ania", "Kasia"], value: "Ania", className: "input"},
-    {id: "haselko", type: "password", name: "haslo", length: 20, className: "input"}
+    {id: "name", type: "text", name: "Imię", description: "Imię: ", regexp: /^[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]*[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]?$/, className: "input", length: 20, minLength: 3, required: false},
+    {id: "surname", type: "text", name: "Nazwisko", description: "Nazwisko: ", regexp: /^[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]*[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]?$/, className: "input", length: 30, minLength: 3, required: false, breakLine: true},
+    {id: "mail", type: "mail", name: "E-mail", description: "Adres e-mail: ", className: "input", length: 40},
+    {id: "phoneNr", type: "number", name: "Numer telefonu", description: "Numer telefonu: ", className: "input", length: 9, minLength: 9, required: false, breakLine: true},
+    {id: "age", type: "number", name: "Wiek", className: "input", breakLine: false, length: 3, minLength: 1, regexp: /^[1-9]+[0-9]?$/, description: "Wiek: "},
+    {id: "sex", type: "select", name: "Płeć", description: "Płeć: ", list: ["Mężczyzna", "Kobieta"], className: "input", breakLine: true},
+    {id: "login", type: "text", name: "Login", description: "Login: ", length: 20, className: "input"},
+    {id: "password", type: "password", name: "haslo", description: "Hasło: ", length: 30, className: "input", breakLine:true},
+    {id: "acceptRules", type: "checkbox", description: "Zapoznałem się z regulaminem i akceptuję jego załozenia ", required: true}
 ];
 
 var button = {

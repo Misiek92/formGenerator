@@ -37,7 +37,7 @@ button:focus {
     left: 0;
     right: 0;
     margin: auto;
-    text-align: center;
+    text-align: justify;
 }
 
 #response {
@@ -118,4 +118,5 @@ button:focus {
 .button-inactive {
     background: #494949 !important;
     text-decoration: line-through !important;
+    cursor: default;
 }

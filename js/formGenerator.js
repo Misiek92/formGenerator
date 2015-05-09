@@ -28,17 +28,20 @@
      *      # select
      *      # mail
      *      # password
-     *      # postalcode - for Poland
+     *      # postalcode - for Poland - NOT AVAILABLE YET
      *      # hidden
-     *      # title - title for sector
+     *      # title - title for sector - NOT AVAILABLE YET
+     *      # phone nr - NOT AVAILABLE YET
      *  - name: This value will be visible as placeholder,
      *  - description: short description before input,
      *  - regexp: validation based on regular expression,
-     *  - class: CSS class,
+     *  - className: CSS class,
+     *  - labelClassName: CSS class for label
      *  - length: field length,
+     *  - minLength: field minimum length,
      *  - breakLine: false by default, set true if you want insert breakLine line after field,
-     *  - uppercase: false by default, set true if you want to change value to uppercase
-     *  - lowercase: false by default, set true if you want to change value to lowercase,
+     *  - uppercase: false by default, set true if you want to change value to uppercase - NOT AVAILABLE YET
+     *  - lowercase: false by default, set true if you want to change value to lowercase - NOT AVAILABLE YET
      *
      *
      * *** EXAMPLE OF OBJECT ***
@@ -49,9 +52,33 @@
      */
     $.fn.formGenerator = function (id, input, button) {
 
+
         var form = $("<form>").attr({
-            id: id
-        });
+                id: id
+            }),
+            possibleToSend = function () {
+                if ($("[valid='false']").length > 0) {
+                    $("#send_" + id).addClass("button-inactive");
+                    $("#send_" + id).attr("active", "false");
+                } else {
+                    $("#send_" + id).removeClass("button-inactive");
+                    $("#send_" + id).attr("active", "true");
+                }
+            },
+            clearForm = function () {
+                $("input").each(function () {
+                    $(this).val("");
+                })
+            },
+            setValid = function () {
+                $("[required]").each(function () { // exception for default values
+                    if ($(this).val().length < $(this).attr("minlength") || $(this).val().length === 0) {
+                        $(this).attr("valid", "false");
+                    } else {
+                        $(this).attr("valid", "true");
+                    }
+                })
+            }
 
         $.each(input, function (undefined, val) {
 
@@ -112,7 +139,8 @@
                             basetype: val.type,
                             placeholder: fieldPlaceholder,
                             maxlength: fieldLength,
-                            minlength: fieldMinLength
+                            minlength: fieldMinLength,
+                            required: val.required === true ? true : false
                         })
                         .addClass(fieldClass);
 
@@ -129,6 +157,7 @@
                             $("#additional_" + val.id).addClass("fg-additional");
                             if (actualLength < fieldMinLength) {
                                 lengthFlag = false;
+                                $(this).attr("valid", "false");
                                 notify = "Value too short! (Min. " + fieldMinLength + " characters)";
                                 $("#additional_" + val.id).html(notify);
                                 $(this).addClass("fg-error-input");
@@ -136,6 +165,7 @@
                                 lengthFlag = true;
                                 notify = "";
                                 $("#additional_" + val.id).html(notify);
+                                $(this).attr("valid", "true");
                                 $(this).removeClass("fg-error-input");
                             }
 
@@ -205,7 +235,7 @@
                                     !(key >= 48 && key <= 57) &&
                                     !(key >= 96 && key <= 105)) || e.shiftKey) {
                                 if (ctrlDown && (key === vKey || key === cKey)) {
-                                    // do nothing
+                                    // do nothing/
                                     console.log('copy / paste detected');
                                 } else {
                                     e.preventDefault();
@@ -226,11 +256,13 @@
                                         $(this).removeClass("fg-error-input");
                                         console.log(this.id);
                                         $("#additional_" + val.id).html("Correct!");
+                                        $(this).attr("valid", "true");
                                         $("#additional_" + val.id).addClass("fg-green");
                                     } else {
                                         console.log($(this).id + " - regexp don't valid");
                                         $(this).addClass("fg-error-input");
                                         $("#additional_" + val.id).html("Wrong input");
+                                        $(this).attr("valid", "false");
                                         $("#additional_" + val.id).removeClass("fg-green");
                                     }
                                 }
@@ -240,11 +272,13 @@
                                         console.log($(this).attr("id") + " - mail valid");
                                         $(this).removeClass("fg-error-input");
                                         $("#additional_" + val.id).html("Correct!");
+                                        $(this).attr("valid", "true");
                                         $("#additional_" + val.id).addClass("fg-green");
                                     } else {
                                         console.log($(this).attr("id") + " - value is not an mail address");
                                         $(this).addClass("fg-error-input");
                                         $("#additional_" + val.id).html("This is not an e-mail");
+                                        $(this).attr("valid", "false");
                                         $("#additional_" + val.id).removeClass("fg-green");
                                     }
                                 }
@@ -338,11 +372,13 @@
                                 }
                                 $("#additional_" + val.id).removeClass();
                                 $("#additional_" + val.id).addClass("fg-additional");
+                                $(this).attr("valid", "false");
 
                                 weight = weight / 10;
                                 balance = Math.floor(Math.log(Math.pow(weight, pwLength))); // measure power algorythm.
                                 if (balance >= requiredPower) {
                                     notifyClass = "fg-green";
+                                    $(this).attr("valid", "true");
                                 }
                                 $("#additional_" + val.id).html("Power: " + balance + " (min. " + requiredPower + ", recommended: 20)").addClass(notifyClass);
                             }
@@ -419,8 +455,13 @@
 
         });
 
-
+        /*
+         * create Buttons
+         */
         if (typeof button !== "undefined") {
+            /*
+             * Clear button
+             */
             var clear = $("<button>")
                 .attr({
                     id: "clear_" + id
@@ -431,12 +472,13 @@
                     e.preventDefault();
                     if (confirm("Do you really want clear form?")) {
                         //clear
-                        $("input").each(function () {
-                            $(this).val("");
-                        })
+                        clearForm();
                     }
                 })
 
+            /*
+             * Send button
+             */
             var submit = $("<button>")
                 .attr({
                     id: "send_" + id
@@ -445,24 +487,33 @@
                 .html("Send")
                 .click(function (e) {
                     e.preventDefault();
-                    if (confirm("Do you really want send form?")) {
-                        if (typeof button.action !== "undefined") { // do sth
-                            if (button.action === "post" && typeof button.url !== "undefined" && typeof button.success !== "undefined" && typeof button.dataType !== "undefined") {
-                                $.post(button.url, {
-                                    name: "John",
-                                    time: "2pm"
-                                }, button.success, button.dataType);
+                    if ($(this).attr("active") === "true") {
+                        if (confirm("Do you really want send form?")) {
+                            if (typeof button.action !== "undefined") { // do sth
+                                if (button.action === "post" && typeof button.url !== "undefined" && typeof button.success !== "undefined" && typeof button.dataType !== "undefined") {
+                                    var postData = {};
+                                    $("input").each(function () {
+                                        if ($(this).attr("type") !== "checkbox") {
+                                            postData[$(this).attr("id")] = $(this).val();
+                                        } else {
+                                            postData[$(this).attr("id")] = $(this).is(':checked');
+                                        }
+                                    });
+                                    $("select").each(function () {
+                                        postData[$(this).attr("id")] = $(this).val();
+                                    })
+                                    $.post(button.url, postData, button.success, button.dataType);
 
-                            } else {
-                                alert("Error before sending form");
-                                console.log("Nothing was send because you didn't provide correct data in button object");
+                                } else {
+                                    alert("Error before sending form");
+                                    console.log("Nothing was send because you didn't provide correct data in button object");
+                                }
+                                clearForm();
+                                setValid();
+                                possibleToSend();
                             }
-                        }
 
-                        //clear
-                        $("input").each(function () {
-                            $(this).val("");
-                        });
+                        }
                     }
                 })
 
@@ -472,5 +523,16 @@
         }
 
         $(this).html(form); // insert generated form object to HTML element
+        setValid();
+        /*
+         * block button on load
+         */
+        possibleToSend();
+        /*
+         * block button during changes on inputs
+         */
+        $("input").on("keyup", function () {
+            possibleToSend();
+        });
     };
 })(jQuery);
