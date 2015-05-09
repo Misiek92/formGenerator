@@ -64,6 +64,7 @@
                     fieldPlaceholder = val.name,
                     fieldDescription = val.description,
                     fieldLength = val.length,
+                    fieldMinLength = val.minLength,
                     fieldClass = val.className,
                     field,
                     ctrlDown = false,
@@ -71,12 +72,12 @@
                     vKey = 86,
                     cKey = 67,
                     label,
-                    //^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
                     mailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                     smallLetterRegExp = /[a-z]/,
                     bigLetterRegExp = /[A-Z]/,
                     diacriticRegExp = /\d/,
                     specialCharRegExp = /\W/,
+                    lengthFlag = false,
                     r = val.regexp,
                     wrapper,
                     additional;
@@ -110,14 +111,43 @@
                             type: fieldType,
                             basetype: val.type,
                             placeholder: fieldPlaceholder,
-                            maxlength: fieldLength
+                            maxlength: fieldLength,
+                            minlength: fieldMinLength
                         })
                         .addClass(val.className);
+
+                    /*
+                     * Length validation
+                     */
+                    if (typeof fieldMinLength !== "undefined") {
+                        field.keyup(function () {
+                            console.log('length validation');
+                            var actualField = $(this).val(),
+                                actualLength = actualField.length,
+                                notify;
+                            $("#additional_" + val.id).removeClass();
+                            $("#additional_" + val.id).addClass("fg-additional");
+                            22
+                            if (actualLength < fieldMinLength) {
+                                lengthFlag = false;
+                                notify = "Value too short! (Min. "+fieldMinLength+" characters)"
+                                $("#additional_" + val.id).html(notify);
+                                $(this).addClass("fg-error-input");
+                            } else {
+                                lengthFlag = true;
+                                notify = ""
+                                $("#additional_" + val.id).html(notify);
+                                $(this).removeClass("fg-error-input");
+                            }
+
+                        });
+                    }
 
                     /*
                      * Number type based on text
                      */
                     if (val.type === "number") {
+
                         /*
                          * Support for ctrl + c & ctrl + v
                          */
@@ -190,32 +220,34 @@
                      */
                     if (typeof val.regexp !== "undefined" || val.type === "mail") {
                         field.keyup(function () {
-                            if (typeof r !== "undefined" && r !== null) {
-                                if (r.test($(this).val())) {
-                                    console.log($(this).id + " - regexp valid");
-                                    $(this).removeClass("fg-error-input");
-                                    console.log(this.id);
-                                    $("#additional_" + val.id).html("Correct!");
-                                    $("#additional_" + val.id).addClass("fg-green");
-                                } else {
-                                    console.log($(this).id + " - regexp don't valid");
-                                    $(this).addClass("fg-error-input");
-                                    $("#additional_" + val.id).html("Wrong input");
-                                    $("#additional_" + val.id).removeClass("fg-green");
+                            if (lengthFlag) {
+                                if (typeof r !== "undefined" && r !== null) {
+                                    if (r.test($(this).val())) {
+                                        console.log($(this).id + " - regexp valid");
+                                        $(this).removeClass("fg-error-input");
+                                        console.log(this.id);
+                                        $("#additional_" + val.id).html("Correct!");
+                                        $("#additional_" + val.id).addClass("fg-green");
+                                    } else {
+                                        console.log($(this).id + " - regexp don't valid");
+                                        $(this).addClass("fg-error-input");
+                                        $("#additional_" + val.id).html("Wrong input");
+                                        $("#additional_" + val.id).removeClass("fg-green");
+                                    }
                                 }
-                            }
-                            // mail validation
-                            if ($(this).attr("basetype") === "mail") {
-                                if (mailRegExp.test($(this).val())) {
-                                    console.log($(this).attr("id") + " - mail valid");
-                                    $(this).removeClass("fg-error-input");
-                                    $("#additional_" + val.id).html("Correct!");
-                                    $("#additional_" + val.id).addClass("fg-green");
-                                } else {
-                                    console.log($(this).attr("id") + " - value is not an mail address");
-                                    $(this).addClass("fg-error-input");
-                                    $("#additional_" + val.id).html("This is not an e-mail");
-                                    $("#additional_" + val.id).removeClass("fg-green");
+                                // mail validation
+                                if ($(this).attr("basetype") === "mail") {
+                                    if (mailRegExp.test($(this).val())) {
+                                        console.log($(this).attr("id") + " - mail valid");
+                                        $(this).removeClass("fg-error-input");
+                                        $("#additional_" + val.id).html("Correct!");
+                                        $("#additional_" + val.id).addClass("fg-green");
+                                    } else {
+                                        console.log($(this).attr("id") + " - value is not an mail address");
+                                        $(this).addClass("fg-error-input");
+                                        $("#additional_" + val.id).html("This is not an e-mail");
+                                        $("#additional_" + val.id).removeClass("fg-green");
+                                    }
                                 }
                             }
                         });
@@ -225,17 +257,18 @@
                      * Password check
                      */
                     if (val.type === "password") {
-                        $("#additional_" + val.id).html("password must have min. 8 characters");
+                        // $("#additional_" + val.id).html("password must have min. 8 characters");
                         field.keyup(function () {
-                            var balance = 0,
-                                password = $(this).val(),
-                                notify = "Weak",
-                                notifyClass = "";
-                            $("#additional_" + val.id).removeClass();
-                            $("#additional_" + val.id).addClass("fg-additional");
-                            if (password.length < 8) { // check length
-                                $("#additional_" + val.id).html("Password too short (min. 8 characters)");
-                            } else { // rest password check
+                            if (lengthFlag) {
+                                var balance = 0,
+                                    password = $(this).val(),
+                                    notify = "Weak",
+                                    notifyClass = "";
+                                $("#additional_" + val.id).removeClass();
+                                $("#additional_" + val.id).addClass("fg-additional");
+                                /*                            if (password.length < 8) { // check length
+                                                                $("#additional_" + val.id).html("Password too short (min. 8 characters)");
+                                                            } else { // rest password check*/
                                 if (smallLetterRegExp.test(password)) {
                                     ++balance;
                                 }
@@ -265,8 +298,10 @@
 
                                 $("#additional_" + val.id).html(notify).addClass(notifyClass);
                             }
+                            /* }*/
                         });
                     }
+
                 } else { // Create select object
                     if (typeof val.list !== "undefined" && val.list[0]) {
                         field = $("<select>")
