@@ -8,7 +8,7 @@ var input = [
     {id: "sex", type: "select", name: "Płeć", description: "Płeć: ", list: ["Mężczyzna", "Kobieta"], className: "input", breakLine: true},
     {id: "login", type: "text", name: "Login", description: "Login: ", length: 20, className: "input"},
     {id: "password", type: "password", name: "haslo", description: "Hasło: ", length: 30, className: "input", breakLine:true},
-    {id: "comment", type: "textarea", name: "komentarz", description: "Komentarz: ", length: 15, className: "input", breakLine: true},
+    {id: "comment", type: "textarea", name: "komentarz", description: "Komentarz: ", className: "input", breakLine: true},
     {id: "acceptRules", type: "checkbox", description: "Zapoznałem się z regulaminem i akceptuję jego załozenia "}
 ];
 

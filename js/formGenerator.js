@@ -31,7 +31,8 @@
      *      # postalcode - for Poland - NOT AVAILABLE YET
      *      # hidden
      *      # title - title for sector - NOT AVAILABLE YET
-     *      # phone nr - NOT AVAILABLE YET
+     *      # phonenr - NOT AVAILABLE YET
+     *      # textarea - textarea with counter
      *  - name: This value will be visible as placeholder,
      *  - description: short description before input,
      *  - regexp: validation based on regular expression,
@@ -42,6 +43,7 @@
      *  - breakLine: false by default, set true if you want insert breakLine line after field,
      *  - uppercase: false by default, set true if you want to change value to uppercase - NOT AVAILABLE YET
      *  - lowercase: false by default, set true if you want to change value to lowercase - NOT AVAILABLE YET
+     *  - required: false by default, set true if you want to force fill this field before send form
      *
      *
      * *** EXAMPLE OF OBJECT ***
@@ -67,6 +69,9 @@
             },
             clearForm = function () {
                 $("input").each(function () {
+                    $(this).val("");
+                });
+                $("textarea").each(function () {
                     $(this).val("");
                 });
             },
@@ -438,10 +443,14 @@
                         })
                         .addClass(fieldClass)
                         .keyup(function () {
-                            var actualLength = $(this).val().length;
-                            $("#additional_" + fieldId).html("Characters " + actualLength + "/" + fieldLength).addClass("fg-green");
+                            if (fieldLength) {
+                                var actualLength = $(this).val().length;
+                                $("#additional_" + fieldId).html("Characters " + actualLength + "/" + fieldLength).addClass("fg-green");
+                            }
                         });
-                    additional.html("Characters 0/" + fieldLength).addClass("fg-green");
+                    if (fieldLength) {
+                        additional.html("Characters 0/" + fieldLength).addClass("fg-green");
+                    }
                 }
 
                 /*
@@ -545,6 +554,9 @@
                                         }
                                     });
                                     $("select").each(function () {
+                                        postData[$(this).attr("id")] = $(this).val();
+                                    });
+                                    $("textarea").each(function () {
                                         postData[$(this).attr("id")] = $(this).val();
                                     });
                                     $.post(button.url, postData, button.success, button.dataType);
