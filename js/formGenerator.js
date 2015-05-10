@@ -68,12 +68,12 @@
                 }
             },
             clearForm = function () {
-                $("input").each(function () {
+                $("[formGenerator]").each(function () {
                     $(this).val("");
                 });
-                $("textarea").each(function () {
+/*                $("textarea").each(function () {
                     $(this).val("");
-                });
+                });*/
             },
             setValid = function () {
                 $("[required]").each(function () { // exception for default values
@@ -151,7 +151,8 @@
                             placeholder: fieldPlaceholder,
                             maxlength: fieldLength,
                             minlength: fieldMinLength,
-                            required: val.required === true ? true : false
+                            required: val.required === true ? true : false,
+                            formGenerator: ""
                         })
                         .addClass(fieldClass);
 
@@ -421,7 +422,8 @@
                     if (typeof val.list !== "undefined" && val.list[0]) {
                         field = $("<select>")
                             .attr({
-                                id: fieldId
+                                id: fieldId,
+                                formGenerator: ""
                             })
                             .addClass(fieldClass);
 
@@ -439,7 +441,8 @@
                     field = $("<textarea>")
                         .attr({
                             id: fieldId,
-                            maxlength: fieldLength
+                            maxlength: fieldLength,
+                            formGenerator: ""
                         })
                         .addClass(fieldClass)
                         .keyup(function () {
@@ -546,19 +549,19 @@
                             if (typeof button.action !== "undefined") { // do sth
                                 if (button.action === "post" && typeof button.url !== "undefined" && typeof button.success !== "undefined" && typeof button.dataType !== "undefined") {
                                     var postData = {};
-                                    $("input").each(function () {
+                                    $("[formGenerator]").each(function () {
                                         if ($(this).attr("type") !== "checkbox") {
                                             postData[$(this).attr("id")] = $(this).val();
                                         } else {
                                             postData[$(this).attr("id")] = $(this).is(':checked');
                                         }
                                     });
-                                    $("select").each(function () {
+      /*                              $("select").each(function () {
                                         postData[$(this).attr("id")] = $(this).val();
                                     });
                                     $("textarea").each(function () {
                                         postData[$(this).attr("id")] = $(this).val();
-                                    });
+                                    });*/
                                     $.post(button.url, postData, button.success, button.dataType);
 
                                 } else {
