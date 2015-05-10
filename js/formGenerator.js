@@ -50,7 +50,7 @@
      *
      * @returns html form with validation
      */
-    $.fn.formGenerator = function (id, input, button) {
+    $.fn.formGenerator = function (id, input, button, authorInfo) {
 
 
         var form = $("<form>").attr({
@@ -107,7 +107,8 @@
                     lengthFlag = true,
                     r = val.regexp,
                     wrapper,
-                    additional;
+                    additional,
+                    required;
                 if (val.type !== "undefined" && val.type !== "number" && val.type !== "mail") {
                     fieldType = val.type.toLowerCase();
                 }
@@ -118,20 +119,25 @@
                  */
                 wrapper = $("<div>")
                     .attr({
-                        id: "cell_" + val.id
+                        id: "cell_" + fieldId
                     }).addClass("fg-inline");
 
                 additional = $("<p>")
                     .attr({
-                        id: "additional_" + val.id
+                        id: "additional_" + fieldId
                     })
                     .addClass("fg-additional")
                     .html(" ");
+                required = $("<span>")
+                    .attr({
+                        id: "req" + fieldId
+                    }).addClass("fg-required")
+                    .html("*");
 
                 /*
                  * create input field
                  */
-                if (fieldType !== "select") {
+                if (fieldType !== "select" && fieldType !== "textarea") {
                     field = $("<input>")
                         .attr({
                             id: fieldId,
@@ -262,6 +268,7 @@
                                         $("#additional_" + val.id).html("Correct!");
                                         if ($(this).prop("required")) {
                                             $(this).attr("valid", "true");
+                                            setValid(); // REQUIRED attribute have the biggest priority
                                         }
                                         $("#additional_" + val.id).addClass("fg-green");
                                     } else {
@@ -346,13 +353,13 @@
                      * Password validation with power measurement
                      */
                     if (fieldType === "password") {
+                        var requiredPower = (typeof val.power !== "undefined" ? val.power : 15); // value 14 is equal to 8 char length password with small letters + number
                         field.keyup(function () {
                             if (lengthFlag) {
                                 var balance = 0,
                                     weight = 0,
                                     password = $(this).val(),
                                     pwLength = password.length,
-                                    requiredPower,
                                     notifyClass = "",
                                     smallLetter = password.match(smallLetterRegExp),
                                     bigLetter = password.match(bigLetterRegExp),
@@ -363,7 +370,6 @@
                                     countDiacritic,
                                     countSpecial; */
 
-                                requiredPower = (typeof val.power !== "undefined" ? val.power : 15); // value 14 is equal to 8 char length password with small letters + number
 
                                 if (smallLetter !== null) {
                                     //    countSmallLetter = smallLetter.length;
@@ -400,10 +406,13 @@
                                 $("#additional_" + val.id).html("Power: " + balance + " (min. " + requiredPower + ", recommended: 20)").addClass(notifyClass);
                             }
                         });
-
+                        additional.html("Power: 0 (min. " + requiredPower + ", recommended: 20)");
                     }
 
-                } else { // Create select object
+                    /*
+                     * Create Select field
+                     */
+                } else if (fieldType === "select") { // Create select object
                     if (typeof val.list !== "undefined" && val.list[0]) {
                         field = $("<select>")
                             .attr({
@@ -418,6 +427,21 @@
                             $(field).append(option);
                         });
                     }
+                    /*
+                     * Create textarea
+                     */
+                } else if (fieldType === "textarea") {
+                    field = $("<textarea>")
+                        .attr({
+                            id: fieldId,
+                            maxlength: fieldLength
+                        })
+                        .addClass(fieldClass)
+                        .keyup(function () {
+                            var actualLength = $(this).val().length;
+                            $("#additional_" + fieldId).html("Characters " + actualLength + "/" + fieldLength).addClass("fg-green");
+                        });
+                    additional.html("Characters 0/" + fieldLength).addClass("fg-green");
                 }
 
                 /*
@@ -432,8 +456,12 @@
                 /*
                  * append elements to form
                  */
+                if (typeof val.required !== "undefined" && val.required === true) {
+                    $(wrapper).append(required);
+                }
                 $(wrapper).append(label);
                 $(wrapper).append(field);
+
                 /*
                  * Show password
                  */
@@ -532,11 +560,24 @@
 
                         }
                     }
-                });
+                }),
+                author = $("<div>")
+                .attr({
+                    id: "formGenerator_author"
+                })
+                .addClass("fg-author")
+                .html("Form generated by formGenerator - jQuery plugin. <a href='https://github.com/Misiek92/formGenerator' target='_blank'>GitHub</a>");
 
             $(form).append($("<br>"));
             $(form).append(clear);
             $(form).append(submit);
+
+            if (typeof authorInfo !== "undefined" && authorInfo === true) {
+                $(form).append(author);
+
+            }
+
+
         }
 
         $(this).html(form); // insert generated form object to HTML element

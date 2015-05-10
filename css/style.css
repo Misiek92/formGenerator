@@ -1,3 +1,7 @@
+/*
+ * SAMPLE CODE
+ */
+
 html {
     background: #E8E8E8;
     color: #4B4B4B;
@@ -51,51 +55,18 @@ button:focus {
     padding: 10px;
     border-radius: 10px;
     border: 0;
-    margin: 5px;
+    margin: 2px 5px 2px 4px;
     font-size: 14px;
     font-weight: bold;
     color: #6F6F6F;
     text-shadow: 1px 1px 0px #EAEAEA;
     box-shadow: 1px 1px 2px 0px #B0B0B0;
-    transition: all .2s ease-in;
-}
-
-.fg-error-input {
-    background: #FFDFDF !important;
-    /* border: 2px dashed #D1A5A2; */
-}
-
-.fg-inline {
-    display: inline-block;
-    border: 0px;
+    transition: background .2s ease-in;
     vertical-align: middle;
 }
 
-.fg-additional {
-    text-align: right;
-    height: 10px;
-    font-size: 10px;
-    margin: 0px;
-    line-height: 10px;
-    color: #fe5c5c;
-    text-shadow: 1px 1px 1px #d1d1d1;
-    font-weight: bold;
-}
-
-.fg-red {
-    color: #c10000 !important;
-}
-
-.fg-green {
-    color: #30a630 !important;
-}
-
-.fg-orange {
-    color: #f37c06 !important;
-}
-
-.fg-yellow {
-    color: #eab300 !important;
+.capitalize {
+    text-transform: capitalize;
 }
 
 .button {
@@ -119,4 +90,94 @@ button:focus {
     background: #494949 !important;
     text-decoration: line-through !important;
     cursor: default;
+}
+
+label {
+    text-shadow: 1px 1px 1px #FFFFFF;
+}
+
+.label {
+    text-transform: full-width;
+    background: #b9b9b9;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 4px 0 0 4px;
+    margin-right: -5px;
+    box-shadow: 1px 1px 1px 0px #fcfcfc;
+}
+/*
+ * CSS REQUIRED FOR JQUERY PLUGIN
+ */
+
+.fg-error-input {
+    background: #FFDFDF !important;
+}
+
+.fg-inline {
+    display: inline-block !important;
+    border: 0px;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.fg-additional {
+    text-align: right;
+    height: 10px;
+    font-size: 10px;
+    margin: 0px 10px 2px 0;
+    line-height: 10px;
+    color: #fe5c5c;
+    text-shadow: 1px 1px 1px #FFFFFF;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.fg-red {
+    color: #c10000 !important;
+}
+
+.fg-green {
+    color: #30a630 !important;
+}
+
+.fg-orange {
+    color: #f37c06 !important;
+}
+
+.fg-yellow {
+    color: #eab300 !important;
+}
+
+.fg-required {
+    color: #fe3939 !important;
+    font-weight: bold;
+    font-size: 18px;
+    text-shadow: 1px 1px 1px #FFB4B4;
+}
+
+.fg-author {
+    opacity: .4;
+    display: inline-block;
+    text-align: right;
+    font-size: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-shadow: 1px 1px 1px #FFFFFF;
+    transition: all .2s linear;
+}
+
+.fg-author:hover {
+    opacity: .8;
+    transition: all .2s linear;
+}
+
+.fg-author a {
+    color: #e95858;
+    text-decoration: none;
+}
+
+.fg-author a:hover {
+    color: #b12f2f;
+    text-decoration: none;
 }
