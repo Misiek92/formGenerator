@@ -71,9 +71,9 @@
                 $("[formGenerator]").each(function () {
                     $(this).val("");
                 });
-/*                $("textarea").each(function () {
-                    $(this).val("");
-                });*/
+                /*                $("textarea").each(function () {
+                                    $(this).val("");
+                                });*/
             },
             setValid = function () {
                 $("[required]").each(function () { // exception for default values
@@ -114,7 +114,7 @@
                     wrapper,
                     additional,
                     required;
-                if (val.type !== "undefined" && val.type !== "number" && val.type !== "mail") {
+                if (typeof val.type !== "undefined" && val.type !== "number" && val.type !== "mail") {
                     fieldType = val.type.toLowerCase();
                 }
                 //end
@@ -142,7 +142,7 @@
                 /*
                  * create input field
                  */
-                if (fieldType !== "select" && fieldType !== "textarea") {
+                if (fieldType !== "select" && fieldType !== "textarea" && fieldType !== "title") {
                     field = $("<input>")
                         .attr({
                             id: fieldId,
@@ -454,6 +454,16 @@
                     if (fieldLength) {
                         additional.html("Characters 0/" + fieldLength).addClass("fg-green");
                     }
+                    /*
+                     * Create title
+                     */
+                } else if (fieldType === "title") {
+                    field = $("<h2>")
+                        .attr({
+                            id: fieldId
+                        })
+                        .addClass(fieldClass)
+                        .html(fieldPlaceholder);
                 }
 
                 /*
@@ -471,7 +481,10 @@
                 if (typeof val.required !== "undefined" && val.required === true) {
                     $(wrapper).append(required);
                 }
-                $(wrapper).append(label);
+                if (fieldType !== "title") {
+                    $(wrapper).append(label);
+                }
+
                 $(wrapper).append(field);
 
                 /*
@@ -500,9 +513,11 @@
                         );
                     $(wrapper).append(toggleShow);
                 }
-                $(wrapper).append(additional);
+                if (fieldType !== "title") {
+                    $(wrapper).append(additional);
+                }
                 $(form).append(wrapper);
-                if (typeof val.breakLine !== "undefined" && val.breakLine === true) // if val.breakLine
+                if ((typeof val.breakLine !== "undefined" && val.breakLine === true) || fieldType === "title") // if val.breakLine
                     $(form).append($("<br>"));
 
                 // set default values
@@ -556,12 +571,12 @@
                                             postData[$(this).attr("id")] = $(this).is(':checked');
                                         }
                                     });
-      /*                              $("select").each(function () {
-                                        postData[$(this).attr("id")] = $(this).val();
-                                    });
-                                    $("textarea").each(function () {
-                                        postData[$(this).attr("id")] = $(this).val();
-                                    });*/
+                                    /*                              $("select").each(function () {
+                                                                      postData[$(this).attr("id")] = $(this).val();
+                                                                  });
+                                                                  $("textarea").each(function () {
+                                                                      postData[$(this).attr("id")] = $(this).val();
+                                                                  });*/
                                     $.post(button.url, postData, button.success, button.dataType);
 
                                 } else {

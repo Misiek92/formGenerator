@@ -1,5 +1,6 @@
 
 var input = [
+    {id: "sampletitle", name: "Sample title", class: "title", type: "title"},
     {id: "name", type: "text", name: "Imię", description: "Imię", regexp: /^[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]*[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]?$/, className: "input capitalize", labelClassName: "label", length: 20, required: true},
     {id: "surname", type: "text", name: "Nazwisko", description: "Nazwisko: ", regexp: /^[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]*[a-zA-ZążźśźćęńłóĄŻŹŚŹĘĆŃÓŁ]?$/, className: "input capitalize", length: 30, minLength: 3, required: false, breakLine: true},
     {id: "mail", type: "mail", name: "E-mail", description: "Adres e-mail: ", className: "input", length: 40},
