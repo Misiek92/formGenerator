@@ -113,7 +113,8 @@
                     r = val.regexp,
                     wrapper,
                     additional,
-                    required;
+                    required,
+                    inlineClass = "fg-inline";
                 if (typeof val.type !== "undefined" && val.type !== "number" && val.type !== "mail") {
                     fieldType = val.type.toLowerCase();
                 }
@@ -122,10 +123,14 @@
                 /*
                  * Create wrapper for elements around field + field
                  */
+
+                if (fieldType === "title") {
+                    inlineClass = "";
+                }
                 wrapper = $("<div>")
                     .attr({
                         id: "cell_" + fieldId
-                    }).addClass("fg-inline");
+                    }).addClass(inlineClass);
 
                 additional = $("<p>")
                     .attr({
