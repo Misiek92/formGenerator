@@ -37,7 +37,7 @@ button:focus {
 
 .form {
     max-width: 700px;
-    position: absolute;
+    position: relative;
     left: 0;
     right: 0;
     margin: auto;

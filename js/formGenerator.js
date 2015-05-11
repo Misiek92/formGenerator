@@ -59,7 +59,7 @@
                 id: id
             }),
             possibleToSend = function () {
-                if ($("[valid='false']").length > 0) {
+                if ($("[valid='false'][formGenerator='"+id+"']").length > 0) {
                     $("#send_" + id).addClass("button-inactive");
                     $("#send_" + id).attr("active", "false");
                 } else {
@@ -68,7 +68,7 @@
                 }
             },
             clearForm = function () {
-                $("[formGenerator]").each(function () {
+                $("[formGenerator='"+id+"']").each(function () {
                     $(this).val("");
                 });
                 /*                $("textarea").each(function () {
@@ -76,7 +76,7 @@
                                 });*/
             },
             setValid = function () {
-                $("[required]").each(function () { // exception for default values
+                $("[required][formGenerator='"+id+"']").each(function () { // exception for default values
                     if ($(this).val().length < $(this).attr("minlength") || $(this).val().length === 0) {
                         $(this).attr("valid", "false");
                     } else {
@@ -157,7 +157,7 @@
                             maxlength: fieldLength,
                             minlength: fieldMinLength,
                             required: val.required === true ? true : false,
-                            formGenerator: ""
+                            formGenerator: id
                         })
                         .addClass(fieldClass);
 
@@ -428,7 +428,7 @@
                         field = $("<select>")
                             .attr({
                                 id: fieldId,
-                                formGenerator: ""
+                                formGenerator: id
                             })
                             .addClass(fieldClass);
 
@@ -447,7 +447,7 @@
                         .attr({
                             id: fieldId,
                             maxlength: fieldLength,
-                            formGenerator: ""
+                            formGenerator: id
                         })
                         .addClass(fieldClass)
                         .keyup(function () {
@@ -569,7 +569,7 @@
                             if (typeof button.action !== "undefined") { // do sth
                                 if (button.action === "post" && typeof button.url !== "undefined" && typeof button.success !== "undefined" && typeof button.dataType !== "undefined") {
                                     var postData = {};
-                                    $("[formGenerator]").each(function () {
+                                    $("[formGenerator='"+id+"']").each(function () {
                                         if ($(this).attr("type") !== "checkbox") {
                                             postData[$(this).attr("id")] = $(this).val();
                                         } else {
@@ -624,7 +624,7 @@
         /*
          * block button during changes on inputs
          */
-        $("input").on("keyup", function () {
+        $("[formGenerator='"+id+"']").on("keyup", function () {
             possibleToSend();
         });
     };
