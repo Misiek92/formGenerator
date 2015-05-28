@@ -18,7 +18,7 @@ var input = [
 var button = {
     className: "button",
     action: "post",
-    url: "http://lets-deliver.pl/dev_001/UAT/tester.php",
+    url: "http://example.com/",
     dataType: "text",
     success: function(data) { $("#response").html(data) }
 };
